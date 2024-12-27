@@ -16,7 +16,12 @@ bun dev
 
 # ecommerce-nextjs-app
 - Typescript
+- shadcn
 - Prisma 
   npm i prisma --save-dev
   npx prisma init --datasource-provider sqlite
+
+## prisma
+migrate:
+- npx prisma migrate dev --name init
 
