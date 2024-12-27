@@ -15,4 +15,8 @@ bun dev
 ```
 
 # ecommerce-nextjs-app
-# ecommerce-nextjs-app
+- Typescript
+- Prisma 
+  npm i prisma --save-dev
+  npx prisma init --datasource-provider sqlite
+
