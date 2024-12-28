@@ -7,10 +7,10 @@ import {Table, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 export default function AdminProductPage() {
     return (
         <>
-            <div>
+            <div className={"flex justify-between px-4"}>
                 <PageHeader>Products</PageHeader>
                 <Button asChild>
-                    <Link href={"/admin/products/new"}/>
+                    <Link href={"/admin/products/new"} >Add</Link>
                 </Button>
             </div>
             <ProductTable/>
