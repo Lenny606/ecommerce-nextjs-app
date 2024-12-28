@@ -1,8 +1,7 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {string} from "postcss-selector-parser";
 import db from "@/db/db";
 
-async function getSalesData() {
+async function getOrderData() {
 
     const data = await db.order.aggregate({
         _sum: {
@@ -16,16 +15,38 @@ async function getSalesData() {
         numberOfSales: data._count
     }
 }
+async function getUserData() {
+
+    const [user, order] = await Promise.all([
+        db.user.count(),
+        db.order.aggregate({
+            _sum: {
+                price: true
+            },
+        })
+    ])
+
+    return {
+        amountAvgPerUser: user._count === 0 ? 0 : (order._sum.price || 0) / user._count / 100,
+        numberOfCustomers: user._count
+    }
+}
 
 
 export default async function AdminDashboard() {
 
-    const data = await getSalesData()
+    const [data, userData] = await Promise.all([
+        getOrderData(),
+        getUserData()
+    ])
 
     return (
+
         <div className={'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'}>
             <DashboardCard title={"Sales"} subtitle={data.numberOfSales} content={data.amount}/>
+            <DashboardCard title={"Customer"} subtitle={userData.numberOfCustomers} content={userData.amountAvgPerUser}/>
         </div>
+
     );
 };
 
