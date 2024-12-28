@@ -17,7 +17,7 @@ async function getOrderData() {
 }
 async function getUserData() {
 
-    const [user, order] = await Promise.all([
+    const [userCount, order] = await Promise.all([
         db.user.count(),
         db.order.aggregate({
             _sum: {
@@ -27,24 +27,46 @@ async function getUserData() {
     ])
 
     return {
-        amountAvgPerUser: user._count === 0 ? 0 : (order._sum.price || 0) / user._count / 100,
-        numberOfCustomers: user._count
+        amountAvgPerUser: userCount === 0 ? 0 : (order._sum.price || 0) / userCount / 100,
+        numberOfCustomers: userCount
+    }
+}
+async function getProductData() {
+
+    const [available, notAvailable] = await Promise.all([
+        db.product.count({
+            where: {
+                isAvailable: true
+            }
+        }),
+        db.product.count({
+            where: {
+                isAvailable: false
+            }
+        }),
+    ])
+
+    return {
+        available,
+        notAvailable
     }
 }
 
 
 export default async function AdminDashboard() {
 
-    const [data, userData] = await Promise.all([
+    const [data, userData, productData] = await Promise.all([
         getOrderData(),
-        getUserData()
+        getUserData(),
+        getProductData()
     ])
 
     return (
 
         <div className={'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'}>
             <DashboardCard title={"Sales"} subtitle={data.numberOfSales} content={data.amount}/>
-            <DashboardCard title={"Customer"} subtitle={userData.numberOfCustomers} content={userData.amountAvgPerUser}/>
+            <DashboardCard title={"Customer"} subtitle={userData.numberOfCustomers} content={userData.numberOfCustomers}/>
+            <DashboardCard title={"Active Products"} subtitle={`${productData.available} Available`} content={`${productData.notAvailable} Not Available`}/>
         </div>
 
     );
