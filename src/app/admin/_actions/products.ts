@@ -3,6 +3,7 @@ import {z} from 'zod'
 import db from "@/db/db";
 import fs from 'fs/promises';
 import {notFound, redirect} from "next/navigation";
+import {unlink} from "node:fs/promises";
 
 const fileSchema = z.instanceof(File, {message: "Required"})
 const imageSchema = fileSchema.refine(file => file.size === 0 || file.type.startsWith('image/'))
@@ -13,6 +14,10 @@ const addSchema = z.object({
     price: z.coerce.number().int().min(1),
     image: imageSchema.refine(file => file.size > 0, {message: "required"}),
     file: fileSchema.refine(file => file.size > 0, {message: "required"})
+})
+const editSchema = addSchema.extend({
+    file: fileSchema.optional(),
+    image: imageSchema.optional()
 })
 
 
@@ -76,6 +81,51 @@ export async function deleteProduct(id: string) {
         fs.unlink(product.filePath),
         fs.unlink(product.imagePath)
     ])
+}
+export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
 
+    //validation
+    const result = editSchema.safeParse(Object.fromEntries(formData.entries()))
 
+    if (result.success === false) {
+        return result.error.formErrors.fieldErrors
+    }
+
+    const data = result.data
+    const product = db.product.findUnique({
+        where: {
+            id
+        }
+    })
+    if (product === null) {
+        return notFound();
+    }
+
+    //filesystem
+    let filePath = product.filePath
+    if (data.file !== null && data.file.size > 0) {
+        await unlink(filePath)
+        filePath = `products/${crypto.randomUUID()}-${data.file.name}`
+        await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()))
+    }
+    let imagePath = product.imagePath
+    if (data.image !== null && data.image.size > 0) {
+        await unlink(imagePath)
+        imagePath = `public/${crypto.randomUUID()}-${data.image.name}`
+        await fs.writeFile(imagePath, Buffer.from(await data.image.arrayBuffer()))
+    }
+
+    await db.product.update({
+        where: {
+            id
+        },
+        data: {
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            filePath: filePath,
+            imagePath: imagePath
+        }
+    })
+    redirect("admin/products")
 }
