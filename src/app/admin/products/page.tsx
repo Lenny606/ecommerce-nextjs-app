@@ -5,7 +5,13 @@ import Link from "next/link";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import db from "@/db/db";
 import {CheckCircle2, MoreVertical, XCircle} from "lucide-react";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {ActiveToggleDropDownItem, DeleteDropDownItem} from "@/app/admin/products/_components/ProductActions";
 
 export default function AdminProductPage() {
@@ -67,7 +73,8 @@ async function ProductTable() {
                         <TableRow key={product.id}>
                             <TableCell>{product.isAvailable ? (<>
                                 <CheckCircle2/><span className={'sr-only'}>Available</span></>) : (
-                                <XCircle/>)}</TableCell>
+                                <XCircle
+                                className={'stroke-destructive'}/>)}</TableCell>
                             <TableCell>{product.name}</TableCell>
                             <TableCell>{product.price / 100}</TableCell>
                             <TableCell>{product._count.orders}</TableCell>
@@ -85,6 +92,7 @@ async function ProductTable() {
                                         <DropdownMenuItem>
                                             <Link href={`/admin/products/${product.id}/edit`}>Edit</Link>
                                         </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
                                        <ActiveToggleDropDownItem id={product.id} isAvailable={product.isAvailable} />
                                         <DeleteDropDownItem id={product.id} disabled={product._count.orders > 0} />
                                     </DropdownMenuContent>
