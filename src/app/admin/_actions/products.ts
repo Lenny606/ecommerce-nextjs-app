@@ -2,7 +2,7 @@
 import {z} from 'zod'
 import db from "@/db/db";
 import fs from 'fs/promises';
-import {redirect} from "next/navigation";
+import {notFound, redirect} from "next/navigation";
 
 const fileSchema = z.instanceof(File, {message: "Required"})
 const imageSchema = fileSchema.refine(file => file.size === 0 || file.type.startsWith('image/'))
@@ -16,7 +16,7 @@ const addSchema = z.object({
 })
 
 
-export async function addProduct(formData: FormData) {
+export async function addProduct(prevState: unknown, formData: FormData) {
 
     //validation
     const result = addSchema.safeParse(Object.fromEntries(formData.entries()))
@@ -41,9 +41,34 @@ export async function addProduct(formData: FormData) {
             name: data.name,
             description: data.description,
             price: data.price,
+            quantity: 0,
             filePath: filePath,
             imagePath: imagePath,
+            isAvailable: false
         }
     })
     redirect("admin/products")
+}
+
+export async function toggleProductAvalability(id: string, isAvailable: boolean) {
+    await db.product.update({
+        where: {
+            id: id
+        },
+        data: {
+            isAvailable:isAvailable
+        }
+    })
+}
+
+export async function deleteProduct(id: string) {
+   const product = await db.product.delete({
+        where: {
+            id: id
+        }
+    })
+
+    if (product === null) {
+        return notFound();
+    }
 }
