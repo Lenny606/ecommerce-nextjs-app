@@ -41,7 +41,6 @@ export async function addProduct(formData: FormData) {
             name: data.name,
             description: data.description,
             price: data.price,
-            quantity: 0,
             filePath: filePath,
             imagePath: imagePath,
         }
