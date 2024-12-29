@@ -1,5 +1,5 @@
 "use client"
-import React, {useActionState, useState} from 'react'
+import React, {useActionState} from 'react'
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -8,7 +8,7 @@ import {addProduct} from "@/app/admin/_actions/products";
 import {useFormStatus} from "react-dom";
 
 export default function ProductForm() {
-    const [price, setPrice] = useState<number>(0)
+    // const [price, setPrice] = useState<number>(0)
     const [error, action] = useActionState(addProduct, {});
 
     return (
@@ -27,10 +27,10 @@ export default function ProductForm() {
             {
                 error.price && <div className={'text-destructive'}>{error.price}</div>
             }
-            {/*todo format number*/}
-            <div className={'text-muted-foreground'}>
-                {price || 0 / 100}
-            </div>
+            {/*/!*todo format number*!/*/}
+            {/*<div className={'text-muted-foreground'}>*/}
+            {/*    {price || 0 / 100}*/}
+            {/*</div>*/}
             <div className={'space-y-2'}>
                 <Label htmlFor={'description'}>Desc</Label>
                 <Textarea name={'description'} id={'description'} required={true}

@@ -56,13 +56,13 @@ export async function toggleProductAvalability(id: string, isAvailable: boolean)
             id: id
         },
         data: {
-            isAvailable:isAvailable
+            isAvailable: isAvailable
         }
     })
 }
 
 export async function deleteProduct(id: string) {
-   const product = await db.product.delete({
+    const product = await db.product.delete({
         where: {
             id: id
         }
@@ -71,4 +71,11 @@ export async function deleteProduct(id: string) {
     if (product === null) {
         return notFound();
     }
+
+    await Promise.all([
+        fs.unlink(product.filePath),
+        fs.unlink(product.imagePath)
+    ])
+
+
 }
