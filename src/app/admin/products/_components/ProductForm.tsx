@@ -60,7 +60,7 @@ export default function ProductForm({product}: { product?: Product | null }) {
             </div>
             {
                 product !== null && (
-                    <Image src={product.imagePath} alt={'image'} height={400} width={400}/>
+                    <Image src={"/"+ product.imagePath} alt={'image'} height={400} width={400}/>
                 )
             }
             {
