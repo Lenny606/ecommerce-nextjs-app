@@ -5,29 +5,34 @@ import Link from "next/link";
 import {ArrowRight} from "lucide-react";
 import {ProductCard, ProductCardSkeleton} from "@/components/ProductCard";
 import {Suspense} from "react";
+import {cache} from "@/lib/cache";
 
 async function wait(time: number) {
     return new Promise((resolve) => {
         setTimeout(resolve, time)
     })
 }
+
 export default async function HomePAge() {
 
-    async function getNewProducts() {
-        await wait(5000)
-        return db.product.findMany({
-            where: {
-                isAvailable: true
-            },
-            take: 5,
-            orderBy: {
-                createdAt: 'desc'
-            }
-        })
-    }
+    const getNewProducts = cache(() => {
 
-    async function getPopularProducts() {
-        await wait(5000)
+            return db.product.findMany({
+                where: {
+                    isAvailable: true
+                },
+                take: 5,
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            })
+        }
+        ,
+        ['/', 'getNewProducts'], {revalidate: 60 * 60 * 24}
+    )
+
+    const getPopularProducts = cache(() => {
+        // await wait(5000)
         return db.product.findMany({
             where: {
                 isAvailable: true
@@ -39,7 +44,7 @@ export default async function HomePAge() {
                 }
             }
         })
-    }
+    }, ["/", "getPopularProducts"], {revalidate: 60 * 60 * 24})
 
     return (
         <main className={'space-y-12'}>

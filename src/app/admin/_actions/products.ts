@@ -4,6 +4,7 @@ import db from "@/db/db";
 import fs from 'fs/promises';
 import {notFound, redirect} from "next/navigation";
 import {unlink} from "node:fs/promises";
+import {revalidatePath} from "next/cache";
 
 const fileSchema = z.instanceof(File, {message: "Required"})
 const imageSchema = fileSchema.refine(file => file.size === 0 || file.type.startsWith('image/'))
@@ -52,6 +53,9 @@ export async function addProduct(prevState: unknown, formData: FormData) {
             isAvailable: false
         }
     })
+    //revalidate cache
+    revalidatePath('/')
+    revalidatePath('/products')
     redirect("admin/products")
 }
 
@@ -64,6 +68,8 @@ export async function toggleProductAvalability(id: string, isAvailable: boolean)
             isAvailable: isAvailable
         }
     })
+    revalidatePath('/')
+    revalidatePath('/products')
 }
 
 export async function deleteProduct(id: string) {
@@ -81,6 +87,8 @@ export async function deleteProduct(id: string) {
         fs.unlink(product.filePath),
         fs.unlink(product.imagePath)
     ])
+    revalidatePath('/')
+    revalidatePath('/products')
 }
 export async function updateProduct(id: string, prevState: unknown, formData: FormData) {
 
@@ -127,5 +135,7 @@ export async function updateProduct(id: string, prevState: unknown, formData: Fo
             imagePath: imagePath
         }
     })
+    revalidatePath('/')
+    revalidatePath('/products')
     redirect("admin/products")
 }

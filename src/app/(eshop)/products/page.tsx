@@ -13,6 +13,7 @@ async function wait(time: number) {
 }
 export default async function ProductsPage() {
 
+    //TODO cahce
     async function getProducts() {
         await wait(1000)
         return db.product.findMany({
