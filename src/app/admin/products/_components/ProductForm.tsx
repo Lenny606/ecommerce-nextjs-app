@@ -13,7 +13,7 @@ export default function ProductForm({product}: { product?: Product | null }) {
     const [price, setPrice] = useState<number | undefined>(product?.price)
     const [error, action] = useActionState(
         product === null ? addProduct : updateProduct.bind(null, product.id), {});
-
+    console.log(product)
     return (
         <form action={action} className={'space-y-8'}>
             <div className={'space-y-2'}>
@@ -60,7 +60,7 @@ export default function ProductForm({product}: { product?: Product | null }) {
             </div>
             {
                 product !== null && (
-                    <Image src={"/"+ product.imagePath} alt={'image'} height={400} width={400}/>
+                    <Image src={"/"+ (product.imagePath).replace("public/", "")} alt={'image'} height={400} width={400}/>
                 )
             }
             {
