@@ -19,7 +19,7 @@ export default async function PurchasePage({params: {id}}: {
         return notFound()
     }
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: product.price,
+        amount: 1000,
         currency: "USD",
         metadata: {productId: product.id} //hooks user to product
     })
