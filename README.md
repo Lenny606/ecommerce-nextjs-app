@@ -26,5 +26,7 @@ migrate:
 - npx prisma migrate dev --name init
 
 ## stripe
-install:
+install BE:
 - npm i --save stripe @stripe/stripe-js next
+install FE:
+- npm i @stripe/react-stripe-js

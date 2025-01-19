@@ -2,11 +2,12 @@ import React from 'react'
 import Stripe from 'stripe'
 import db from "@/db/db";
 import {notFound} from "next/navigation";
+import CheckoutForm from "@/components/CheckoutForm";
 
 export default async function PurchasePage({params: {id}}: {
     params: { id: string }
 }) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET)
+    const stripe = new Stripe(process.env.STRIPE_SECRET as string)
     const product = await db.product.findUnique(
         {
             where: {
