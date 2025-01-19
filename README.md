@@ -25,3 +25,6 @@ bun dev
 migrate:
 - npx prisma migrate dev --name init
 
+## stripe
+install:
+- npm i --save stripe @stripe/stripe-js next
