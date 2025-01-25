@@ -20,6 +20,7 @@ bun dev
 - Prisma 
   npm i prisma --save-dev
   npx prisma init --datasource-provider sqlite
+- npm i resend react-email
 
 ## prisma
 migrate:
