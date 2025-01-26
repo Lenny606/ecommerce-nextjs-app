@@ -3,9 +3,10 @@ import OrderInformations from "@/email/_components/OrderInformations";
 
 type PuchaseReceiptEmailProps = {
     product: {
-        name: string
+        name: string,
+        imagePath: string
     },
-    order: { id: string, createdAt: Date, price: number },
+    order: { id: string, createdAt: string, price: number },
     downloadId: string
 
 }
