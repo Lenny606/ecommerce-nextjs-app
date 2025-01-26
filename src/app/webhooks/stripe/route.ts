@@ -3,6 +3,7 @@ import {NextRequest, NextResponse} from "next/server";
 import Stripe from "stripe";
 import db from "@/db/db";
 import {Resend} from "resend";
+import PurchaseReceipt from "@/email/PurchaseReceipt";
 
 //STRIPE CALLS IF SUCCESSFUL
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
             from: "Support - " + process.env.SENDER_EMAIL,
             to: email,
             subject: "Download link",
-            react: '<h1>Hello</h1>',
+            react: "<PurchaseReceipt order={order} product={product} downloadId={donwloadID.productId}/>",
         })
     }
 
